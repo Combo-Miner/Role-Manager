@@ -22,6 +22,7 @@ module.exports = {
   },
   async execute(interaction) {
     let client = require("../index")
+
     let config = client.config
     let db = client.db == null ? require("quick.db") : client.db;
     
@@ -96,7 +97,7 @@ module.exports = {
 
     let menu = new MessageSelectMenu()
       .setCustomId("select" + number)
-      .setMinValues(1)
+      .setMaxValues(6)
       .setPlaceholder("Selectionne un role");
     //here we gonna cache the user roles and add them to the select menu
     //we gonna add all the roles in the guild so if the option is selected it add them
@@ -140,6 +141,8 @@ module.exports = {
         return option;
       });
       rowOfButtons.components[0].setDisabled(currentIndex <= 0);
+     
+
       i.update({
         ephemeral: true,
         embeds: [embed],
@@ -287,22 +290,30 @@ module.exports = {
             const optionsToRemove = oldOptions.filter((option) => !newOptions.includes(option));
             //then we gonna add the new roles and remove the old roles
             for (let value of optionsToAdd) {
+    
+              //checking for position of the member and the role
               if (member.roles.highest.position < message.guild.roles.cache.get(value).position) {
-                return   update(i);
-                }
+              return i.reply({content : "Rôle trop haut pour toi",ephemeral : true})
+              }
+    
               await member.roles.add(value).catch((err) =>
-                { }
+                { log(err)}
               );
             }
             for (let value of optionsToRemove) {
+              //checking for position of the member and the role
               if (member.roles.highest.position < message.guild.roles.cache.get(value).position) {
-                return   update(i);
-                }
+                 return i.reply({content : "Rôle trop haut pour toi",ephemeral : true})
+              }
+    
+              
+            
               await member.roles.remove(value).catch((err) =>
     
-                { }
+                {log(err) }
               );
             }
+            //and update the message
             embed.description = `\`\`\`Information du membre\`\`\`\n${member} (\`${
               member.id
             }\`)\n\n\`\`\`Rôles actuel\`\`\`\n${
@@ -313,6 +324,7 @@ module.exports = {
                 
                 .join("\n") || "Aucun rôle"
             }`;
+    
     
     
     
@@ -462,6 +474,7 @@ module.exports = {
           embeds: [embed],
           components: [rowOfSelectMenu, rowOfButtons],
         });
+
       }
     });
     collector.on("collect", async (i) => {
@@ -477,24 +490,24 @@ module.exports = {
 
           //checking for position of the member and the role
           if (member.roles.highest.position < message.guild.roles.cache.get(value).position) {
-          return   update(i);
+            return i.reply({content : "Rôle trop haut pour toi",ephemeral : true})
           }
 
           await member.roles.add(value).catch((err) =>
-            { }
+            { log(err)}
           );
         }
         for (let value of optionsToRemove) {
           //checking for position of the member and the role
           if (member.roles.highest.position < message.guild.roles.cache.get(value).position) {
-          return   update(i);
+            return i.reply({content : "Rôle trop haut pour toi",ephemeral : true})
           }
 
           
         
           await member.roles.remove(value).catch((err) =>
 
-            { }
+            {log(err) }
           );
         }
         //and update the message
