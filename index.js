@@ -15,7 +15,7 @@ require("./handler")(client);
 
 //im lazy to do a fucking event handler so i just put it here
 client.on("interactionCreate", async (interaction) => {
-  if (interaction.isCommand() || interaction.targetType === "MESSAGE") {
+  if (interaction.isCommand() || interaction.targetType === "USER") {
   
 
     let command = client.commands.get(interaction.commandName);
